@@ -1,0 +1,30 @@
+{
+  "name": "genkitchat",
+  "version": "1.0.0",
+  "description": "This is a chat demo using Genkit",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/nohe427/genkitChat"
+  },
+  "keywords": [
+    "genkit",
+    "chat"
+  ],
+  "author": "Alexander Nohe",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "genkit-cli": "^1.0.4",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@genkit-ai/express": "^1.0.4",
+    "@genkit-ai/vertexai": "^1.0.4",
+    "@google-cloud/storage": "^7.15.0",
+    "firebase-admin": "^13.1.0",
+    "genkit": "^1.0.4"
+  }
+}
