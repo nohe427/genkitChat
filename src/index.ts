@@ -19,9 +19,14 @@ import vertexAI, { gemini20Flash001 } from '@genkit-ai/vertexai';
 import { genkit, SessionData, SessionStore, z, Session } from 'genkit/beta';
 import { Storage } from '@google-cloud/storage';
 
+let servingPort = 2222;
+if (process.env.PORT) {
+  servingPort = parseInt(process.env.PORT)
+}
 
+const projectId = "lon-next";
 const bucket = "lon-next.firebasestorage.app";
-const storage = new Storage({ projectId: 'lon-next' })
+const storage = new Storage({ projectId: projectId })
 
 // used for managing session storage
 // start session management
@@ -48,8 +53,8 @@ class GcsSessionStorage<S = any> implements SessionStore<S> {
 }
 // end session management
 
-interface ChatHistory {
-  messages: string[],
+interface ChatSessionInfo {
+  // Use this if you want to store some very specific state such as User Preferences
 };
 
 // start genkit declaration
@@ -57,7 +62,7 @@ const ai = genkit({
   plugins: [
     vertexAI({
       location: 'us-central1',
-      projectId: 'lon-next'
+      projectId: projectId,
     })
   ],
   model: gemini20Flash001
@@ -77,7 +82,7 @@ export const entryFlow = ai.defineFlow({
   }),
 },
   async (input) => {
-    let session: Session<ChatHistory>;
+    let session: Session<ChatSessionInfo>;
     if (input.sessionId) {
       session = await ai.loadSession(input.sessionId, {
         store: new GcsSessionStorage(),
@@ -90,11 +95,11 @@ export const entryFlow = ai.defineFlow({
 
     const chat = session.chat({
       system: 'talk like a pirate',
+      tools: [],
     });
 
     const result = await chat.send({
       model: gemini20Flash001,
-      // system: 'talk like a pirate',
       prompt: input.text,
       config: {
         temperature: 1.0,
@@ -107,7 +112,7 @@ export const entryFlow = ai.defineFlow({
 
 // start express server startup
 startFlowServer({
-  port: 2222,
+  port: servingPort,
   cors: {
     origin: "*",
   },
